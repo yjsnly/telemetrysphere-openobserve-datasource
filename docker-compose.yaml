@@ -1,0 +1,24 @@
+services:
+  grafana:
+    user: root
+    container_name: 'telemetrysphere-openobserve-datasource'
+
+    build:
+      context: ./.config
+      args:
+        grafana_image: ${GRAFANA_IMAGE:-grafana-enterprise}
+        grafana_version: ${GRAFANA_VERSION:-11.3.1}
+        development: ${DEVELOPMENT:-false}
+    ports:
+      - 3000:3000/tcp
+    volumes:
+      - ./dist:/var/lib/grafana/plugins/telemetrysphere-openobserve-datasource
+      - ./provisioning:/etc/grafana/provisioning
+      - .:/root/telemetrysphere-openobserve-datasource
+
+    environment:
+      NODE_ENV: development
+      GF_LOG_FILTERS: plugin.telemetrysphere-openobserve-datasource:debug
+      GF_LOG_LEVEL: debug
+      GF_DATAPROXY_LOGGING: 1
+      GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: telemetrysphere-openobserve-datasource
